@@ -35,7 +35,7 @@ void RREF(matrix &m) {
     for (int i = 0; i < m.size(); ++i) {
         if (m[i][i] == 0) {
             int j = i + 1;
-            while (m[j][i] == 0)
+            while ( j < m.size() && m[j][i] == 0)
                 ++j;
             if (j >= m.size())
                 continue;
@@ -45,7 +45,7 @@ void RREF(matrix &m) {
             scalarMult(m[i], 1.0 / m[i][i]);
         }
         for (int j = i + 1; j < m.size(); ++j) {
-            if (m[j][i] != 0) {
+            if (abs(m[j][i]) > eps) {
                 scalarMult(m[j], m[i][i]);
                 add(m, j, i, -(m[j][i] / m[i][i]));
             }
@@ -54,9 +54,11 @@ void RREF(matrix &m) {
     
     // Working up(back-substitution)
     for (int i = min(m.size(), m[0].size()) - 1; i >= 0; --i) {
-        for (int j = i - 1; j >= 0; --j) {
-            if (m[j][i] != 0) {
-                add(m, j, i, -(m[j][i] / m[i][i]));
+        if(abs(m[i][i]) > eps){
+            for (int j = i - 1; j >= 0; --j) {
+                if (abs(m[j][i]) > eps) {
+                    add(m, j, i, -(m[j][i] / m[i][i]));
+                }
             }
         }
     }
@@ -78,7 +80,7 @@ void print(matrix &m) {
 
 int main() {
     // Put your matrix here
-    matrix m = {{1, 5, 1, 2}, {0, 1, 0, 1.0 / 3.0}, {0, 0, 1, 1.0 / 3.0}};
+    matrix m = {{1,1,2},{-2,0,-1},{1,3,5}};
     RREF(m);
     print(m);
 }
